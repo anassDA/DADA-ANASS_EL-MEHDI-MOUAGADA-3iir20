@@ -42,5 +42,3 @@ Description de Projet:
 
  Avis et Commentaires  
 - Les clients peuvent noter et laisser des avis sur les biens ou les agents.  
-
-ccccc
