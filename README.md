@@ -31,15 +31,8 @@ Description de Projet:
 - Gestion des utilisateurs et des agents.  
 - Gestion des biens immobiliers et des transactions.  
 - Statistiques et rapports sur les ventes/location.  
-
- Intégration de Google Maps 
-- Affichage des biens sur une carte interactive.  
-- Recherche par localisation.  
-
- Système de Paiement et Contrats 
+Système de Paiement et Contrats 
 - Paiement en ligne pour réserver un bien ou payer une avance.  
 - Génération automatique de contrats en PDF.  
 
- Avis et Commentaires  
-- Les clients peuvent noter et laisser des avis sur les biens ou les agents.  
 
