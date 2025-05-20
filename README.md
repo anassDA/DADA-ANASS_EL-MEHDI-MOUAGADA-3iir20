@@ -35,4 +35,6 @@ Système de Paiement et Contrats
 - Paiement en ligne pour réserver un bien ou payer une avance.  
 - Génération automatique de contrats en PDF.  
 
+ Avis et Commentaires  
+- Les clients peuvent noter et laisser des avis sur les biens ou les agents.  
 
