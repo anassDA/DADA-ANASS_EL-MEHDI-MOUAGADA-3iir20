@@ -3,20 +3,40 @@
 {% block title %}Supprimer l'Immobilier{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h1 class="card-title">Supprimer "{{ immobilier.titre }}" ?</h1>
-                    <form method="post">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger mr-2">Confirmer</button>
-                        <a class="btn btn-secondary" href="{% url 'immobilier_list' %}">Annuler</a>
-                    </form>
-                </div>
-            </div>
+<style>
+  body {
+    background: linear-gradient(to right, #f8f9fa, #e9ecef);
+  }
+  .delete-container {
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .card {
+    animation: fadeIn 0.6s ease-in-out;
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<div class="delete-container">
+  <div class="card p-4" style="width: 100%; max-width: 500px; background-color: #fff;">
+    <div class="card-body text-center">
+      <h3 class="card-title text-danger mb-4">Supprimer ce bien ?</h3>
+      <p class="mb-4">Êtes-vous sûr de vouloir supprimer <strong>"{{ immobilier.titre }}"</strong> ? Cette action est irréversible.</p>
+      <form method="post">
+        {% csrf_token %}
+        <div class="d-flex justify-content-center gap-3">
+          <button type="submit" class="btn btn-danger px-4 py-2 rounded-pill shadow-sm">Confirmer</button>
+          <a href="{% url 'immobilier_list' %}" class="btn btn-secondary px-4 py-2 rounded-pill shadow-sm">Annuler</a>
         </div>
+      </form>
     </div>
+  </div>
 </div>
 {% endblock %}
