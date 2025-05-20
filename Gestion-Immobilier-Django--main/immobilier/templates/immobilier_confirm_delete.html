@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Supprimer l'Immobilier{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-title">Supprimer "{{ immobilier.titre }}" ?</h1>
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger mr-2">Confirmer</button>
+                        <a class="btn btn-secondary" href="{% url 'immobilier_list' %}">Annuler</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

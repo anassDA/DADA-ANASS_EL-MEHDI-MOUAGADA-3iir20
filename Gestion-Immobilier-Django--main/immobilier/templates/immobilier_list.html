@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+
+{% block title %}Liste des Biens Immobiliers{% endblock %}
+
+{% block content %}
+{% load static %}
+<div class="container-fluid px-4 py-5">
+  <!-- Hero Section -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="bg-gradient-primary text-white rounded-lg shadow-lg p-5" style="background: linear-gradient(135deg, #4361ee, #3a0ca3);">
+        <div class="row align-items-center">
+          <div class="col-lg-8">
+            <h1 class="display-4 fw-bold">Trouvez votre bien idéal</h1>
+            <p class="lead opacity-90">Parcourez notre sélection exclusive de propriétés immobilières</p>
+          </div>
+          <div class="col-lg-4">
+            <div class="d-flex justify-content-lg-end mt-4 mt-lg-0">
+              <a class="btn btn-light btn-lg hover-lift" href="{% url 'immobilier_create' %}">
+                <i class="fas fa-plus-circle me-2"></i>Ajouter un bien
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <form class="row g-3" method="GET">
+            <div class="col-lg-4">
+              <div class="input-group">
+                <span class="input-group-text bg-white border-end-0">
+                  <i class="fas fa-search text-muted"></i>
+                </span>
+                <input type="search" class="form-control border-start-0 ps-0" name="q" placeholder="Rechercher par titre, adresse..." value="{{ request.GET.q }}">
+              </div>
+            </div>
+            <div class="col-lg-3">
+              <div class="input-group">
+                <span class="input-group-text bg-white border-end-0">
+                  <i class="fas fa-euro-sign text-muted"></i>
+                </span>
+                <input type="number" class="form-control border-start-0 ps-0" name="min_price" placeholder="Prix minimum" value="{{ request.GET.min_price }}">
+              </div>
+            </div>
+            <div class="col-lg-3">
+              <div class="input-group">
+                <span class="input-group-text bg-white border-end-0">
+                  <i class="fas fa-euro-sign text-muted"></i>
+                </span>
+                <input type="number" class="form-control border-start-0 ps-0" name="max_price" placeholder="Prix maximum" value="{{ request.GET.max_price }}">
+              </div>
+            </div>
+            <div class="col-lg-2">
+              <button type="submit" class="btn btn-primary w-100 d-flex align-items-center justify-content-center">
+                <i class="fas fa-filter me-2"></i>Filtrer
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Property Listings -->
+  {% if immobiliers %}
+  <div class="row g-4">
+    {% for immobilier in immobiliers %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100 border-0 shadow-sm hover-lift transition-all">
+        <div class="position-relative">
+          {% if immobilier.image %}
+          <img src="{{ immobilier.image.url }}" class="card-img-top object-cover" style="height: 250px;" alt="{{ immobilier.titre }}">
+          {% else %}
+          <img src="{% static 'img/default.png' %}" class="card-img-top object-cover" style="height: 250px;" alt="Image par défaut">
+          {% endif %}
+          <div class="position-absolute top-0 end-0 m-3">
+            <span class="badge bg-primary py-2 px-3 rounded-pill fs-6">{{ immobilier.prix|floatformat:0 }} €</span>
+          </div>
+        </div>
+        <div class="card-body p-4">
+          <h5 class="card-title h4 mb-3">
+            <a href="{% url 'immobilier_detail' immobilier.pk %}" class="text-decoration-none text-dark stretched-link">{{ immobilier.titre }}</a>
+          </h5>
+          <div class="d-flex align-items-center mb-3">
+            <i class="fas fa-map-marker-alt text-primary me-2"></i>
+            <p class="text-muted mb-0">{{ immobilier.adresse }}</p>
+          </div>
+          <p class="card-text text-secondary">{{ immobilier.description|truncatewords:15 }}</p>
+          <hr class="my-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">
+              <i class="far fa-calendar-alt me-1"></i> Ajouté le {{ immobilier.date_ajout|date:"d/m/Y" }}
+            </small>
+            <div class="btn-group">
+              <a href="{% url 'immobilier_update' immobilier.pk %}" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-edit me-1"></i>Modifier
+              </a>
+              <a href="{% url 'immobilier_delete' immobilier.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce bien ?');">
+                <i class="fas fa-trash-alt me-1"></i>Supprimer
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  <div class="row mt-5">
+    <div class="col-12">
+      <nav aria-label="Pagination">
+        <ul class="pagination pagination-lg justify-content-center flex-wrap">
+          {% if immobiliers.has_previous %}
+          <li class="page-item">
+            <a class="page-link rounded-start" href="?page=1{% if query %}&q={{ query }}{% endif %}&min_price={{ min_price }}&max_price={{ max_price }}" aria-label="First">
+              <i class="fas fa-angle-double-left"></i>
+            </a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="?page={{ immobiliers.previous_page_number }}{% if query %}&q={{ query }}{% endif %}&min_price={{ min_price }}&max_price={{ max_price }}" aria-label="Previous">
+              <i class="fas fa-angle-left"></i>
+            </a>
+          </li>
+          {% endif %}
+          
+          {% for num in immobiliers.paginator.page_range %}
+            {% if immobiliers.number == num %}
+            <li class="page-item active">
+              <span class="page-link">{{ num }}</span>
+            </li>
+            {% elif num > immobiliers.number|add:'-3' and num < immobiliers.number|add:'3' %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}&min_price={{ min_price }}&max_price={{ max_price }}">{{ num }}</a>
+            </li>
+            {% endif %}
+          {% endfor %}
+          
+          {% if immobiliers.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ immobiliers.next_page_number }}{% if query %}&q={{ query }}{% endif %}&min_price={{ min_price }}&max_price={{ max_price }}" aria-label="Next">
+              <i class="fas fa-angle-right"></i>
+            </a>
+          </li>
+          <li class="page-item">
+            <a class="page-link rounded-end" href="?page={{ immobiliers.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}&min_price={{ min_price }}&max_price={{ max_price }}" aria-label="Last">
+              <i class="fas fa-angle-double-right"></i>
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  </div>
+  {% else %}
+  <!-- Empty State -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-5 text-center">
+          <div class="mb-4">
+            <i class="fas fa-home text-secondary" style="font-size: 5rem;"></i>
+          </div>
+          <h3 class="mb-3">Aucun bien immobilier disponible</h3>
+          <p class="text-muted mb-4">Nous n'avons trouvé aucun bien correspondant à vos critères de recherche.</p>
+          <a href="{% url 'immobilier_list' %}" class="btn btn-outline-primary">
+            <i class="fas fa-sync-alt me-2"></i>Réinitialiser les filtres
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+/* Custom CSS for advanced styling */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #4361ee, #3a0ca3);
+}
+
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.object-cover {
+  object-fit: cover;
+}
+
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+.opacity-90 {
+  opacity: 0.9;
+}
+
+.rounded-lg {
+  border-radius: 0.75rem;
+}
+
+.card {
+  overflow: hidden;
+  border-radius: 0.75rem;
+}
+
+.card:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+.btn {
+  border-radius: 0.5rem;
+}
+
+.page-link {
+  border: none;
+  padding: 0.75rem 1.25rem;
+  color: #495057;
+  background-color: #f8f9fa;
+  margin: 0 0.15rem;
+}
+
+.page-item.active .page-link {
+  background-color: #4361ee;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .page-link {
+    padding: 0.5rem 0.75rem;
+  }
+}
+</style>
+{% endblock %}

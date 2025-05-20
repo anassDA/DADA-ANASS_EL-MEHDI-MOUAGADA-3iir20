@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if form.instance.pk %}
+        Modifier l'Immobilier
+    {% else %}
+        Ajouter un nouvel Immobilier
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h1 class="card-title">
+                        {% if form.instance.pk %}
+                            <span class="text-primary">Modifier</span>  le bien
+                        {% else %}
+                            <span class="text-success">Ajouter</span> un nouvel bien
+                        {% endif %}
+                    </h1>
+                    <form method="post" enctype="multipart/form-data">
+                        
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-success mr-2">Enregistrer</button>
+                        <a class="btn btn-secondary" href="{% url 'immobilier_list' %}">Annuler</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

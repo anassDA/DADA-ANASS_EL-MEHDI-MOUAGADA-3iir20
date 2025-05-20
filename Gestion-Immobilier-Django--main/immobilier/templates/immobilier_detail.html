@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Détail de l'Immobilier{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="border border-light-subtle rounded-4 shadow-lg bg-white p-4 p-md-5" style="border-left: 8px solid #0d6efd;">
+                
+                <h1 class="text-center mb-4 display-6 fw-bold text-primary-emphasis">{{ immobilier.titre }}</h1>
+
+                {% if immobilier.image %}
+                <div class="rounded overflow-hidden mb-4 shadow-sm">
+                    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img src="{{ immobilier.image.url }}" class="d-block w-100 object-fit-cover" style="max-height: 400px;" alt="{{ immobilier.titre }}">
+                            </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                            <span class="visually-hidden">Précédent</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                            <span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                            <span class="visually-hidden">Suivant</span>
+                        </button>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="bg-light rounded-4 p-4 mb-4 shadow-sm border">
+                    <h4 class="mb-3 text-secondary fw-semibold">📋 Détails de l’annonce</h4>
+                    <div class="mb-2">
+                        <i class="bi bi-geo-alt-fill text-primary"></i> 
+                        <strong>Adresse :</strong> {{ immobilier.adresse }}
+                    </div>
+                    <div class="mb-2">
+                        <i class="bi bi-cash-coin text-success"></i>
+                        <strong>Prix :</strong> {{ immobilier.prix|floatformat:2 }} €
+                    </div>
+                    <div>
+                        <i class="bi bi-card-text text-info"></i>
+                        <strong>Description :</strong>
+                        <p class="mt-2 text-muted">{{ immobilier.description }}</p>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <a href="{% url 'immobilier_list' %}" class="btn btn-outline-primary btn-lg rounded-pill px-4 shadow-sm transition-hover">
+                        ⬅️ Retour à la liste
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
