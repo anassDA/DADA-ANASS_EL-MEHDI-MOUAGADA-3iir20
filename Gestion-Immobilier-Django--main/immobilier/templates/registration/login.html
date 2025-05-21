@@ -1,48 +1,225 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 
 {% block title %}Connexion{% endblock %}
 
 {% block content %}
-{% load widget_tweaks %}
-<div class="container py-5">
-  <div class="row justify-content-center">
+<div class="container py-5 d-flex justify-content-center align-items-center min-vh-100 animated-gradient">
     <div class="col-md-6 col-lg-5">
-      <div class="card rounded-4 shadow-lg border-0 overflow-hidden">
-        <div class="card-header bg-gradient-primary text-white text-center py-4">
-          <h4 class="mb-0 fw-bold">Connexion</h4>
-        </div>
+        <div class="card shadow-xl border-0 rounded-4 glass-effect">
+            <div class="card-body p-5">
+                <div class="text-center mb-4 bounce-in">
+                    <div class="icon-circle">
+                        <i class="fas fa-lock fa-3x text-primary mb-3 pulse"></i>
+                    </div>
+                    <h2 class="gradient-text mb-2 fw-bold">
+                        Connexion
+                    </h2>
+                    <p class="text-muted floating">Bienvenue sur votre espace</p>
+                </div>
 
-        <div class="card-body p-5 bg-white">
-          <form method="post" novalidate>
-            {% csrf_token %}
-            
-            {% for field in form %}
-              <div class="mb-4">
-                <label for="{{ field.id_for_label }}" class="form-label fw-semibold text-secondary">{{ field.label }}</label>
-                {{ field|add_class:"form-control form-control-lg rounded-3 shadow-sm" }}
-                {% if field.errors %}
-                  <div class="text-danger mt-1 small">
-                    {{ field.errors|striptags }}
-                  </div>
-                {% endif %}
-              </div>
-            {% endfor %}
-            
-            <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill shadow-sm transition-hover">
-              Connexion
-            </button>
+                <form method="post" novalidate class="fade-in">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                    <div class="form-floating mb-4 input-group-hover">
+                        {{ field|add_class:"form-control custom-input"|attr:"placeholder:field.label" }}
+                        <label for="{{ field.id_for_label }}">
+                            <i class="fas {% if field.name == 'username' %}fa-user{% else %}fa-key{% endif %} me-2"></i>
+                            {{ field.label }}
+                        </label>
+                        {% if field.errors %}
+                        <div class="text-danger mt-1 small fade-in">
+                            {{ field.errors|striptags }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    
+                    <button type="submit" class="btn btn-primary w-100 py-3 fw-semibold mb-3 gradient-button">
+                        <i class="fas fa-sign-in-alt me-2"></i>Connexion
+                    </button>
 
-            {% if messages %}
-              <div class="alert alert-info mt-4 rounded-3 shadow-sm" role="alert">
-                {% for message in messages %}
-                  <div>{{ message }}</div>
-                {% endfor %}
-              </div>
-            {% endif %}
-          </form>
+                    {% if messages %}
+                    <div class="alert alert-info mt-4 rounded-3 fade-in-up" role="alert">
+                        {% for message in messages %}
+                        <div>{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </form>
+
+                <div class="text-center mt-4 fade-in-up">
+                    <p class="mb-3 text-muted">Pas encore de compte ?</p>
+                    <a href="{% url 'signup' %}" 
+                       class="btn btn-outline-secondary w-100 py-2 hover-effect-secondary">
+                        <i class="fas fa-user-plus me-2"></i>Créer un compte
+                    </a>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
+
+<style>
+    .animated-gradient {
+        background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+        background-size: 400% 400%;
+        animation: gradient 15s ease infinite;
+    }
+
+    .glass-effect {
+        backdrop-filter: blur(16px);
+        background: rgba(255, 255, 255, 0.85);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .glass-effect:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.45);
+    }
+
+    .gradient-text {
+        background: linear-gradient(45deg, #FF512F, #DD2476);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: hue 10s infinite linear;
+    }
+
+    .input-group-hover {
+        transform: translateY(0);
+        transition: all 0.3s ease;
+    }
+
+    .input-group-hover:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    .custom-input {
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background: rgba(255, 255, 255, 0.9);
+        transition: all 0.3s ease;
+    }
+
+    .gradient-button {
+        background: linear-gradient(45deg, #FF512F, #DD2476);
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .gradient-button:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 10px 20px rgba(221, 36, 118, 0.3);
+    }
+
+    .icon-circle {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(45deg, #FF512F20, #DD247620);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+    }
+
+    @keyframes gradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    @keyframes hue {
+        from { filter: hue-rotate(0deg); }
+        to { filter: hue-rotate(360deg); }
+    }
+
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+
+    .bounce-in {
+        animation: bounceIn 1s ease;
+    }
+
+    .fade-in {
+        animation: fadeIn 0.8s ease;
+    }
+
+    .fade-in-up {
+        animation: fadeInUp 0.8s ease;
+    }
+
+    .floating {
+        animation: floating 3s ease infinite;
+    }
+
+    @keyframes bounceIn {
+        0% { transform: scale(0.3); opacity: 0; }
+        50% { transform: scale(1.05); }
+        70% { transform: scale(0.9); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes fadeInUp {
+        from { 
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes floating {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-5px); }
+        100% { transform: translateY(0px); }
+    }
+
+    .hover-effect-secondary {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        z-index: 1;
+    }
+
+    .hover-effect-secondary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 100%;
+        background: linear-gradient(45deg, #FF512F, #DD2476);
+        transition: all 0.3s ease;
+        z-index: -1;
+    }
+
+    .hover-effect-secondary:hover::before {
+        width: 100%;
+    }
+
+    .hover-effect-secondary:hover {
+        color: white;
+        border-color: transparent;
+    }
+</style>
 {% endblock %}

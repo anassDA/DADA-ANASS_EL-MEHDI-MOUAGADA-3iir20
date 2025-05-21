@@ -11,7 +11,6 @@ from django.contrib.auth.views import LoginView,LogoutView
 from django.core.paginator import Paginator
 
 
-
 @login_required
 def immobilier_list(request):
     query = request.GET.get('q', '')

@@ -3,20 +3,144 @@
 {% block title %}Déconnexion{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">{{ block.super }}</div>
-                <div class="card-body">
-                    <form method="post" action="{% url 'logout' %}">
+<div class="container min-vh-100 d-flex align-items-center justify-content-center">
+    <div class="row w-100 justify-content-center">
+        <div class="col-md-5">
+            <div class="card custom-card shadow-lg border-0 rounded-lg">
+                <div class="card-header bg-gradient text-white text-center py-3">
+                    <h4 class="mb-0 fade-in">Confirmation de déconnexion</h4>
+                </div>
+                <div class="card-body text-center p-5">
+                    <form method="post" action="{% url 'logout' %}" class="fade-in-up">
                         {% csrf_token %}
-                        <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
-                        <button type="submit" class="btn btn-primary">Oui, déconnectez-moi</button>
+                        <div class="mb-4 pulse-animation">
+                            <i class="fas fa-sign-out-alt fa-3x text-gradient mb-3"></i>
+                            <p class="lead">Êtes-vous sûr de vouloir vous déconnecter ?</p>
+                        </div>
+                        <div class="d-grid gap-3">
+                            <button type="submit" class="btn btn-custom-primary btn-lg shadow-sm ripple-effect">
+                                <i class="fas fa-sign-out-alt me-2"></i>Oui, déconnectez-moi
+                            </button>
+                            <a href="/" class="btn btn-custom-secondary btn-lg ripple-effect">Annuler</a>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    :root {
+        --primary-color: #4e73df;
+        --secondary-color: #224abe;
+        --accent-color: #1a3a9c;
+        --animation-timing: 0.3s;
+    }
+
+    .custom-card {
+        transition: all var(--animation-timing) ease;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+    }
+
+    .custom-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .bg-gradient {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    }
+
+    .text-gradient {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .btn-custom-primary {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        border: none;
+        transition: all var(--animation-timing) ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-custom-primary:hover {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        transform: translateY(-2px);
+    }
+
+    .btn-custom-secondary {
+        border: 2px solid var(--secondary-color);
+        color: var(--secondary-color);
+        transition: all var(--animation-timing) ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-custom-secondary:hover {
+        background-color: var(--secondary-color);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .ripple-effect {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .ripple-effect::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background: rgba(255, 255, 255, 0.2);
+        opacity: 0;
+        transition: all 0.5s ease;
+    }
+
+    .ripple-effect:active::after {
+        opacity: 1;
+        transform: scale(0);
+        transition: 0s;
+    }
+
+    .fade-in {
+        animation: fadeIn 1s ease-in;
+    }
+
+    .fade-in-up {
+        animation: fadeInUp 0.8s ease-out;
+    }
+
+    .pulse-animation {
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+</style>
 {% endblock %}

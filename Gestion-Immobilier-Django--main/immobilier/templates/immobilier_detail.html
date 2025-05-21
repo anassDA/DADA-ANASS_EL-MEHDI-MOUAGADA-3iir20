@@ -1,60 +1,144 @@
 {% extends 'base.html' %}
 
-{% block title %}Détail de l'Immobilier{% endblock %}
+{% block title %}{{ immobilier.titre }} | Détail{% endblock %}
 
 {% block content %}
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-10">
-            <div class="border border-light-subtle rounded-4 shadow-lg bg-white p-4 p-md-5" style="border-left: 8px solid #0d6efd;">
-                
-                <h1 class="text-center mb-4 display-6 fw-bold text-primary-emphasis">{{ immobilier.titre }}</h1>
-
+            <div class="property-detail-card bg-white rounded-4 shadow-lg overflow-hidden">
+                <!-- Image Section -->
                 {% if immobilier.image %}
-                <div class="rounded overflow-hidden mb-4 shadow-sm">
-                    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+                <div class="position-relative">
+                    <div class="carousel slide" id="propertyCarousel" data-bs-ride="carousel">
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img src="{{ immobilier.image.url }}" class="d-block w-100 object-fit-cover" style="max-height: 400px;" alt="{{ immobilier.titre }}">
+                                <img src="{{ immobilier.image.url }}" 
+                                     class="w-100 object-fit-cover property-hero-image" 
+                                     alt="{{ immobilier.titre }}">
                             </div>
                         </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
-                            <span class="visually-hidden">Précédent</span>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev" title="Previous image">
+                            <span class="carousel-control-prev-icon bg-dark bg-opacity-50 rounded-circle p-3" aria-hidden="true"></span>
                         </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-                            <span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
-                            <span class="visually-hidden">Suivant</span>
+                        <button class="carousel-control-next" type="button" data-bs-target="#propertyCarousel" data-bs-slide="next" title="Next image">
+                            <span class="carousel-control-next-icon bg-dark bg-opacity-50 rounded-circle p-3" aria-hidden="true"></span>
                         </button>
+                    </div>
+                    <div class="property-price-badge">
+                        {{ immobilier.prix|floatformat:2 }} €
                     </div>
                 </div>
                 {% endif %}
 
-                <div class="bg-light rounded-4 p-4 mb-4 shadow-sm border">
-                    <h4 class="mb-3 text-secondary fw-semibold">📋 Détails de l’annonce</h4>
-                    <div class="mb-2">
-                        <i class="bi bi-geo-alt-fill text-primary"></i> 
-                        <strong>Adresse :</strong> {{ immobilier.adresse }}
+                <!-- Content Section -->
+                <div class="p-4 p-md-5">
+                    <h1 class="display-5 fw-bold mb-4 text-gradient">{{ immobilier.titre }}</h1>
+
+                    <!-- Property Quick Info -->
+                    <div class="property-quick-info mb-5">
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <div class="info-card p-3 rounded-3 bg-light">
+                                    <i class="fas fa-map-marker-alt text-primary mb-2"></i>
+                                    <h6 class="mb-1">Localisation</h6>
+                                    <p class="mb-0 text-muted">{{ immobilier.adresse }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="info-card p-3 rounded-3 bg-light">
+                                    <i class="fas fa-ruler-combined text-primary mb-2"></i>
+                                    <h6 class="mb-1">Type de bien</h6>
+                                    <p class="mb-0 text-muted">{{ immobilier.type_bien }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="info-card p-3 rounded-3 bg-light">
+                                    <i class="fas fa-calendar-alt text-primary mb-2"></i>
+                                    <h6 class="mb-1">Disponibilité</h6>
+                                    <p class="mb-0 text-muted">Immédiate</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-2">
-                        <i class="bi bi-cash-coin text-success"></i>
-                        <strong>Prix :</strong> {{ immobilier.prix|floatformat:2 }} €
+
+                    <!-- Description -->
+                    <div class="property-description mb-5">
+                        <h4 class="fw-bold mb-4">
+                            <i class="fas fa-info-circle me-2 text-primary"></i>
+                            Description
+                        </h4>
+                        <div class="bg-light p-4 rounded-3">
+                            {{ immobilier.description|linebreaks }}
+                        </div>
                     </div>
-                    <div>
-                        <i class="bi bi-card-text text-info"></i>
-                        <strong>Description :</strong>
-                        <p class="mt-2 text-muted">{{ immobilier.description }}</p>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{% url 'immobilier_list' %}" class="btn btn-outline-primary px-4 py-2 rounded-pill">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            Retour à la liste
+                        </a>
+                        <button class="btn btn-primary px-4 py-2 rounded-pill">
+                            <i class="fas fa-phone-alt me-2"></i>
+                            Contacter
+                        </button>
                     </div>
                 </div>
-
-                <div class="text-center">
-                    <a href="{% url 'immobilier_list' %}" class="btn btn-outline-primary btn-lg rounded-pill px-4 shadow-sm transition-hover">
-                        ⬅️ Retour à la liste
-                    </a>
-                </div>
-
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .property-detail-card {
+        border: none;
+        transition: transform 0.3s ease;
+    }
+    
+    .property-hero-image {
+        height: 500px;
+    }
+    
+    .property-price-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 12px 24px;
+        border-radius: 50px;
+        font-weight: bold;
+        font-size: 1.2rem;
+        color: var(--primary-color);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .text-gradient {
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .info-card {
+        transition: transform 0.3s ease;
+    }
+    
+    .info-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .info-card i {
+        font-size: 1.5rem;
+        display: block;
+    }
+    
+    .btn {
+        transition: all 0.3s ease;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+</style>
 {% endblock %}
