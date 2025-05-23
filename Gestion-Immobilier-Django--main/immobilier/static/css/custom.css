@@ -1,4 +1,4 @@
-/* --- Bouton personnalisé --- */
+
 .btn-custom-signup {
     background-color: #ff5733;
     color: #fff;
@@ -16,7 +16,6 @@
     transform: translateY(-2px);
 }
 
-/* --- Conteneur global --- */
 .container {
     margin-top: 60px;
     padding: 20px;

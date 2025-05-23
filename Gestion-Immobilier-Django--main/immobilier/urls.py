@@ -15,5 +15,7 @@ urlpatterns = [
     path('accounts/login/', views.CustomLoginView.as_view(), name='login'),
     path('account/logout-confirm/', views.logout_confirm, name='logout_confirm'),
     path('account/logout/', views.CustomLogoutView.as_view(), name='logout'),
-    path('signup/', views.signup, name='signup')
+    path('signup/', views.signup, name='signup'),
+     path('calendar/', views.immobilier_calendar, name='immobilier_calendar'),
+    path('api/immobilier-events/', views.immobilier_events_api, name='immobilier_events_api'),
 ]

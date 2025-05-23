@@ -1,5 +1,3 @@
-
-# Create your views here.
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Immobilier
 from .forms import ImmobilierForm
@@ -7,9 +5,10 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.contrib.auth.views import LoginView,LogoutView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.core.paginator import Paginator
-
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 @login_required
 def immobilier_list(request):
@@ -40,12 +39,11 @@ def immobilier_list(request):
     }
     return render(request, 'immobilier_list.html', context)
 
-
-
 @login_required
 def immobilier_detail(request, pk):
     immobilier = get_object_or_404(Immobilier, pk=pk)
     return render(request, 'immobilier_detail.html', {'immobilier': immobilier})
+
 @login_required
 def immobilier_create(request):
     if request.method == 'POST':
@@ -56,6 +54,7 @@ def immobilier_create(request):
     else:
         form = ImmobilierForm()
     return render(request, 'immobilier_form.html', {'form': form})
+
 @login_required
 def immobilier_update(request, pk):
     immobilier = get_object_or_404(Immobilier, pk=pk)
@@ -67,12 +66,15 @@ def immobilier_update(request, pk):
     else:
         form = ImmobilierForm(instance=immobilier)
     return render(request, 'immobilier_form.html', {'form': form})
+
+@login_required
 def immobilier_delete(request, pk):
     immobilier = get_object_or_404(Immobilier, pk=pk)
     if request.method == 'POST':
         immobilier.delete()
         return redirect('immobilier_list')
     return render(request, 'immobilier_confirm_delete.html', {'immobilier': immobilier})
+
 def logout_confirm(request):
     return render(request, 'registration/logout-confirm.html')
 
@@ -83,7 +85,7 @@ def signup(request):
             form.save()  
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
-            messages.success(request,'compte creer'+username)
+            messages.success(request, 'compte creer ' + username)
             user = authenticate(username=username, password=raw_password)
             login(request, user)
             return redirect('login')
@@ -96,3 +98,22 @@ class CustomLoginView(LoginView):
 
 class CustomLogoutView(LogoutView):
     template_name = 'registration/logout-confirm.html'
+
+# -------- Calendar API and View --------
+
+@csrf_exempt
+def immobilier_events_api(request):
+   
+    events = []
+    for immo in Immobilier.objects.all():
+        if hasattr(immo, 'date_disponible') and immo.date_disponible:
+            events.append({
+                "title": immo.titre,
+                "start": str(immo.date_disponible),
+                "id": immo.id,
+            })
+    return JsonResponse(events, safe=False)
+
+@login_required
+def immobilier_calendar(request):
+    return render(request, 'immobilier_calendar.html')
