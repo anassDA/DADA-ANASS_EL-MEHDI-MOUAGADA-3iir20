@@ -8,28 +8,34 @@
         <div class="col-lg-10">
             <div class="property-detail-card bg-white rounded-4 shadow-lg overflow-hidden">
                 <!-- Image Section -->
-                {% if immobilier.image %}
                 <div class="position-relative">
                     <div class="carousel slide" id="propertyCarousel" data-bs-ride="carousel">
                         <div class="carousel-inner">
                             <div class="carousel-item active">
+                                {% if immobilier.image %}
                                 <img src="{{ immobilier.image.url }}" 
                                      class="w-100 object-fit-cover property-hero-image" 
                                      alt="{{ immobilier.titre }}">
+                                {% else %}
+                                <div class="property-hero-image bg-secondary d-flex align-items-center justify-content-center">
+                                    <i class="fas fa-home fa-4x text-white"></i>
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev" title="Previous image">
+                        {% if immobilier.image %}
+                        <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev" title="Image précédente">
                             <span class="carousel-control-prev-icon bg-dark bg-opacity-50 rounded-circle p-3" aria-hidden="true"></span>
                         </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#propertyCarousel" data-bs-slide="next" title="Next image">
+                        <button class="carousel-control-next" type="button" data-bs-target="#propertyCarousel" data-bs-slide="next" title="Image suivante">
                             <span class="carousel-control-next-icon bg-dark bg-opacity-50 rounded-circle p-3" aria-hidden="true"></span>
                         </button>
+                        {% endif %}
                     </div>
                     <div class="property-price-badge">
                         {{ immobilier.prix|floatformat:2 }} €
                     </div>
                 </div>
-                {% endif %}
 
                 <!-- Content Section -->
                 <div class="p-4 p-md-5">
@@ -47,16 +53,22 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="info-card p-3 rounded-3 bg-light">
-                                    <i class="fas fa-ruler-combined text-primary mb-2"></i>
-                                    <h6 class="mb-1">Type de bien</h6>
-                                    <p class="mb-0 text-muted">{{ immobilier.type_bien }}</p>
+                                    <i class="fas fa-door-open text-primary mb-2"></i>
+                                    <h6 class="mb-1">Disponibilité</h6>
+                                    <p class="mb-0 text-muted">
+                                        {% if immobilier.disponible %}
+                                        <span class="text-success">Disponible</span>
+                                        {% else %}
+                                        <span class="text-danger">Non disponible</span>
+                                        {% endif %}
+                                    </p>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="info-card p-3 rounded-3 bg-light">
                                     <i class="fas fa-calendar-alt text-primary mb-2"></i>
-                                    <h6 class="mb-1">Disponibilité</h6>
-                                    <p class="mb-0 text-muted">Immédiate</p>
+                                    <h6 class="mb-1">Ajouté le</h6>
+                                    <p class="mb-0 text-muted">{{ immobilier.date_ajout|date:"d/m/Y" }}</p>
                                 </div>
                             </div>
                         </div>
@@ -73,18 +85,106 @@
                         </div>
                     </div>
 
+                    <!-- Reservation Section -->
+                    <div class="reservation-section mt-5">
+                        <h4 class="fw-bold mb-4">
+                            <i class="fas fa-calendar-check me-2 text-primary"></i>
+                            Réservation
+                        </h4>
+                        
+                        {% if request.user.is_authenticated %}
+                            {% if request.user.is_staff %}
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Les réservations sont visibles dans l'interface d'administration
+                                </div>
+                            {% else %}
+                                <div class="d-flex align-items-center gap-3 flex-wrap">
+                                    <form method="post" action="{% url 'reserve_apartment' immobilier.pk %}">
+                                        {% csrf_token %}
+                                        <button type="submit" 
+                                                class="btn btn-lg {% if is_reserved %}btn-success{% else %}btn-primary{% endif %}"
+                                                {% if not immobilier.disponible %}disabled{% endif %}>
+                                            {% if is_reserved %}
+                                                <i class="fas fa-check-circle me-2"></i>
+                                                Déjà réservé
+                                            {% else %}
+                                                <i class="fas fa-hand-holding-heart me-2"></i>
+                                                {% if immobilier.disponible %}
+                                                Réserver maintenant
+                                                {% else %}
+                                                Non disponible
+                                                {% endif %}
+                                            {% endif %}
+                                        </button>
+                                    </form>
+                                    {% if is_reserved %}
+                                        <div class="reservation-details">
+                                            <small class="text-muted d-block">
+                                                  Réservé le: {{ reservation.created_at|date:"d/m/Y" }}
+                                                </small>
+                                     <small class="text-muted d-block">
+                                        À: {{ reservation.created_at|date:"H:i" }}
+                                    </small>
+                                        </small>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <a href="{% url 'login' %}?next={% url 'immobilier_detail' immobilier.pk %}" 
+                                   class="alert-link">
+                                    Connectez-vous
+                                </a> pour réserver cet appartement
+                            </div>
+                        {% endif %}
+                    </div>
+
                     <!-- Action Buttons -->
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex justify-content-between align-items-center mt-5">
                         <a href="{% url 'immobilier_list' %}" class="btn btn-outline-primary px-4 py-2 rounded-pill">
                             <i class="fas fa-arrow-left me-2"></i>
                             Retour à la liste
                         </a>
-                        <button class="btn btn-primary px-4 py-2 rounded-pill">
-                            <i class="fas fa-phone-alt me-2"></i>
-                            Contacter
-                        </button>
+                        <div class="btn-group">
+                            {% if request.user.is_staff %}
+                            <a href="{% url 'immobilier_update' immobilier.pk %}" 
+                               class="btn btn-outline-secondary px-4 py-2 rounded-pill">
+                                <i class="fas fa-edit me-2"></i>
+                                Modifier
+                            </a>
+                            {% endif %}
+                            <button class="btn btn-primary px-4 py-2 rounded-pill" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#contactModal">
+                                <i class="fas fa-phone-alt me-2"></i>
+                                Contacter
+                            </button>
+                        </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contact Modal -->
+<div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="contactModalLabel">Contact</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="lead">Pour plus d'informations, contactez-nous :</p>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-phone me-2"></i>+33 6 12 34 56 78</li>
+                    <li><i class="fas fa-envelope me-2"></i>contact@immobilier.com</li>
+                    <li><i class="fas fa-map-marker-alt me-2"></i>Paris, France</li>
+                </ul>
             </div>
         </div>
     </div>
@@ -98,6 +198,7 @@
     
     .property-hero-image {
         height: 500px;
+        object-fit: cover;
     }
     
     .property-price-badge {
@@ -109,18 +210,19 @@
         border-radius: 50px;
         font-weight: bold;
         font-size: 1.2rem;
-        color: var(--primary-color);
+        color: #4361ee;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
     
     .text-gradient {
-        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        background: linear-gradient(45deg, #4361ee, #3a0ca3);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
     
     .info-card {
         transition: transform 0.3s ease;
+        height: 100%;
     }
     
     .info-card:hover {
@@ -130,6 +232,7 @@
     .info-card i {
         font-size: 1.5rem;
         display: block;
+        margin-bottom: 0.5rem;
     }
     
     .btn {
@@ -139,6 +242,21 @@
     .btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .reservation-details {
+        border-left: 3px solid #4361ee;
+        padding-left: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+        .property-hero-image {
+            height: 300px;
+        }
+        
+        .display-5 {
+            font-size: 2rem;
+        }
     }
 </style>
 {% endblock %}

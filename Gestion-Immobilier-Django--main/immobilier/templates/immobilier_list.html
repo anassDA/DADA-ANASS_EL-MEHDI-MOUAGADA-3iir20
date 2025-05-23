@@ -12,14 +12,16 @@
         <div class="row align-items-center">
           <div class="col-lg-8">
             <h1 class="display-4 fw-bold">Trouvez votre bien idéal</h1>
-            <p class="lead opacity-90">Parcourez notre sélection exclusive de propriétés immobilières</p>
+            <p class="lead opacity-90">Parcourez notre sélection exclusive de propriétés disponibles</p>
           </div>
           <div class="col-lg-4">
+            {% if request.user.is_staff %}
             <div class="d-flex justify-content-lg-end mt-4 mt-lg-0">
               <a class="btn btn-light btn-lg hover-lift" href="{% url 'immobilier_create' %}">
                 <i class="fas fa-plus-circle me-2"></i>Ajouter un bien
               </a>
             </div>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -37,7 +39,8 @@
                 <span class="input-group-text bg-white border-end-0">
                   <i class="fas fa-search text-muted"></i>
                 </span>
-                <input type="search" class="form-control border-start-0 ps-0" name="q" placeholder="Rechercher par titre, adresse..." value="{{ request.GET.q }}">
+                <input type="search" class="form-control border-start-0 ps-0" name="q" 
+                       placeholder="Rechercher par titre, adresse..." value="{{ request.GET.q }}">
               </div>
             </div>
             <div class="col-lg-3">
@@ -45,7 +48,8 @@
                 <span class="input-group-text bg-white border-end-0">
                   <i class="fas fa-euro-sign text-muted"></i>
                 </span>
-                <input type="number" class="form-control border-start-0 ps-0" name="min_price" placeholder="Prix minimum" value="{{ request.GET.min_price }}">
+                <input type="number" class="form-control border-start-0 ps-0" name="min_price" 
+                       placeholder="Prix minimum" value="{{ request.GET.min_price }}">
               </div>
             </div>
             <div class="col-lg-3">
@@ -53,7 +57,8 @@
                 <span class="input-group-text bg-white border-end-0">
                   <i class="fas fa-euro-sign text-muted"></i>
                 </span>
-                <input type="number" class="form-control border-start-0 ps-0" name="max_price" placeholder="Prix maximum" value="{{ request.GET.max_price }}">
+                <input type="number" class="form-control border-start-0 ps-0" name="max_price" 
+                       placeholder="Prix maximum" value="{{ request.GET.max_price }}">
               </div>
             </div>
             <div class="col-lg-2">
@@ -75,17 +80,25 @@
       <div class="card h-100 border-0 shadow-sm hover-lift transition-all">
         <div class="position-relative">
           {% if immobilier.image %}
-          <img src="{{ immobilier.image.url }}" class="card-img-top object-cover" style="height: 250px;" alt="{{ immobilier.titre }}">
+          <img src="{{ immobilier.image.url }}" class="card-img-top object-cover" 
+               style="height: 250px;" alt="{{ immobilier.titre }}">
           {% else %}
-          <img src="{% static 'img/default.png' %}" class="card-img-top object-cover" style="height: 250px;" alt="Image par défaut">
+          <img src="{% static 'img/default.png' %}" class="card-img-top object-cover" 
+               style="height: 250px;" alt="Image par défaut">
           {% endif %}
           <div class="position-absolute top-0 end-0 m-3">
-            <span class="badge bg-primary py-2 px-3 rounded-pill fs-6">{{ immobilier.prix|floatformat:0 }} €</span>
+            <span class="badge bg-{% if immobilier.disponible %}primary{% else %}secondary{% endif %} 
+                   py-2 px-3 rounded-pill fs-6">
+              {{ immobilier.prix|floatformat:0 }} €
+            </span>
           </div>
         </div>
         <div class="card-body p-4">
           <h5 class="card-title h4 mb-3">
-            <a href="{% url 'immobilier_detail' immobilier.pk %}" class="text-decoration-none text-dark stretched-link">{{ immobilier.titre }}</a>
+            <a href="{% url 'immobilier_detail' immobilier.pk %}" 
+               class="text-decoration-none text-dark stretched-link">
+              {{ immobilier.titre }}
+            </a>
           </h5>
           <div class="d-flex align-items-center mb-3">
             <i class="fas fa-map-marker-alt text-primary me-2"></i>
@@ -97,14 +110,19 @@
             <small class="text-muted">
               <i class="far fa-calendar-alt me-1"></i> Ajouté le {{ immobilier.date_ajout|date:"d/m/Y" }}
             </small>
+            {% if request.user.is_staff %}
             <div class="btn-group">
-              <a href="{% url 'immobilier_update' immobilier.pk %}" class="btn btn-sm btn-outline-secondary">
+              <a href="{% url 'immobilier_update' immobilier.pk %}" 
+                 class="btn btn-sm btn-outline-secondary">
                 <i class="fas fa-edit me-1"></i>Modifier
               </a>
-              <a href="{% url 'immobilier_delete' immobilier.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce bien ?');">
+              <a href="{% url 'immobilier_delete' immobilier.pk %}" 
+                 class="btn btn-sm btn-outline-danger" 
+                 onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce bien ?');">
                 <i class="fas fa-trash-alt me-1"></i>Supprimer
               </a>
             </div>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -119,12 +137,16 @@
         <ul class="pagination pagination-lg justify-content-center flex-wrap">
           {% if immobiliers.has_previous %}
           <li class="page-item">
-            <a class="page-link rounded-start" href="?page=1{% if query %}&q={{ query }}{% endif %}&min_price={{ min_price }}&max_price={{ max_price }}" aria-label="First">
+            <a class="page-link rounded-start" 
+               href="?page=1{% if query %}&q={{ query }}{% endif %}&min_price={{ min_price }}&max_price={{ max_price }}" 
+               aria-label="First">
               <i class="fas fa-angle-double-left"></i>
             </a>
           </li>
           <li class="page-item">
-            <a class="page-link" href="?page={{ immobiliers.previous_page_number }}{% if query %}&q={{ query }}{% endif %}&min_price={{ min_price }}&max_price={{ max_price }}" aria-label="Previous">
+            <a class="page-link" 
+               href="?page={{ immobiliers.previous_page_number }}{% if query %}&q={{ query }}{% endif %}&min_price={{ min_price }}&max_price={{ max_price }}" 
+               aria-label="Previous">
               <i class="fas fa-angle-left"></i>
             </a>
           </li>
@@ -137,19 +159,26 @@
             </li>
             {% elif num > immobiliers.number|add:'-3' and num < immobiliers.number|add:'3' %}
             <li class="page-item">
-              <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}&min_price={{ min_price }}&max_price={{ max_price }}">{{ num }}</a>
+              <a class="page-link" 
+                 href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}&min_price={{ min_price }}&max_price={{ max_price }}">
+                {{ num }}
+              </a>
             </li>
             {% endif %}
           {% endfor %}
           
           {% if immobiliers.has_next %}
           <li class="page-item">
-            <a class="page-link" href="?page={{ immobiliers.next_page_number }}{% if query %}&q={{ query }}{% endif %}&min_price={{ min_price }}&max_price={{ max_price }}" aria-label="Next">
+            <a class="page-link" 
+               href="?page={{ immobiliers.next_page_number }}{% if query %}&q={{ query }}{% endif %}&min_price={{ min_price }}&max_price={{ max_price }}" 
+               aria-label="Next">
               <i class="fas fa-angle-right"></i>
             </a>
           </li>
           <li class="page-item">
-            <a class="page-link rounded-end" href="?page={{ immobiliers.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}&min_price={{ min_price }}&max_price={{ max_price }}" aria-label="Last">
+            <a class="page-link rounded-end" 
+               href="?page={{ immobiliers.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}&min_price={{ min_price }}&max_price={{ max_price }}" 
+               aria-label="Last">
               <i class="fas fa-angle-double-right"></i>
             </a>
           </li>
@@ -180,7 +209,6 @@
 </div>
 
 <style>
-/* Custom CSS for advanced styling */
 .bg-gradient-primary {
   background: linear-gradient(135deg, #4361ee, #3a0ca3);
 }
@@ -239,6 +267,14 @@
 @media (max-width: 768px) {
   .page-link {
     padding: 0.5rem 0.75rem;
+  }
+  
+  .display-4 {
+    font-size: 2.5rem;
+  }
+  
+  .card-img-top {
+    height: 200px !important;
   }
 }
 </style>

@@ -1,14 +1,19 @@
+
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Immobilier
-from .forms import ImmobilierForm
-from django.contrib.auth.forms import UserCreationForm
+from django.http import JsonResponse
+from django.contrib import messages
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.paginator import Paginator
-from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from .models import Immobilier
+from .forms import ImmobilierForm
+from .models import Reservation 
+from .models import Reservation, Notification
+from django.contrib.auth.models import User
+
 
 @login_required
 def immobilier_list(request):
@@ -16,28 +21,43 @@ def immobilier_list(request):
     min_price = request.GET.get('min_price', '')
     max_price = request.GET.get('max_price', '')
 
-    immobiliers = Immobilier.objects.all()
+    immobiliers = Immobilier.objects.filter(disponible=True)
 
     if query:
         immobiliers = immobiliers.filter(titre__icontains=query)
-
     if min_price:
         immobiliers = immobiliers.filter(prix__gte=min_price)
-
     if max_price:
         immobiliers = immobiliers.filter(prix__lte=max_price)
 
-    paginator = Paginator(immobiliers, 12)  
+    paginator = Paginator(immobiliers, 12)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    context = {
+    return render(request, 'immobilier_list.html', {
         'immobiliers': page_obj,
         'query': query,
         'min_price': min_price,
         'max_price': max_price,
-    }
-    return render(request, 'immobilier_list.html', context)
+    })
+
+@login_required
+def immobilier_detail(request, pk):
+    immobilier = get_object_or_404(Immobilier, pk=pk)
+    reservation = None
+    
+    if request.user.is_authenticated:
+        reservation = Reservation.objects.filter(
+            user=request.user, 
+            immobilier=immobilier
+        ).first()
+
+    return render(request, 'immobilier_detail.html', {
+        'immobilier': immobilier,
+        'reservation': reservation,
+        'is_reserved': reservation is not None
+    })  
+
 
 @login_required
 def immobilier_detail(request, pk):
@@ -46,6 +66,9 @@ def immobilier_detail(request, pk):
 
 @login_required
 def immobilier_create(request):
+    if not request.user.is_staff:
+        return redirect('immobilier_list')
+    
     if request.method == 'POST':
         form = ImmobilierForm(request.POST, request.FILES)
         if form.is_valid():
@@ -55,8 +78,13 @@ def immobilier_create(request):
         form = ImmobilierForm()
     return render(request, 'immobilier_form.html', {'form': form})
 
+
+
 @login_required
 def immobilier_update(request, pk):
+    if not request.user.is_staff:
+        return redirect('immobilier_list')
+    
     immobilier = get_object_or_404(Immobilier, pk=pk)
     if request.method == 'POST':
         form = ImmobilierForm(request.POST, request.FILES, instance=immobilier)
@@ -69,6 +97,9 @@ def immobilier_update(request, pk):
 
 @login_required
 def immobilier_delete(request, pk):
+    if not request.user.is_staff:
+        return redirect('immobilier_list')
+    
     immobilier = get_object_or_404(Immobilier, pk=pk)
     if request.method == 'POST':
         immobilier.delete()
@@ -82,38 +113,38 @@ def signup(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()  
+            user = form.save()
             username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password1')
-            messages.success(request, 'compte creer ' + username)
-            user = authenticate(username=username, password=raw_password)
+            messages.success(request, f'Compte créé pour {username}')
             login(request, user)
-            return redirect('login')
+            return redirect('immobilier_list')
     else:
         form = UserCreationForm()
     return render(request, 'registration/signup.html', {'form': form})
 
-class CustomLoginView(LoginView): 
+class CustomLoginView(LoginView):
     template_name = 'registration/login.html'
 
 class CustomLogoutView(LogoutView):
     template_name = 'registration/logout-confirm.html'
 
-# -------- Calendar API and View --------
 
-@csrf_exempt
-def immobilier_events_api(request):
-   
-    events = []
-    for immo in Immobilier.objects.all():
-        if hasattr(immo, 'date_disponible') and immo.date_disponible:
-            events.append({
-                "title": immo.titre,
-                "start": str(immo.date_disponible),
-                "id": immo.id,
-            })
-    return JsonResponse(events, safe=False)
 
 @login_required
-def immobilier_calendar(request):
-    return render(request, 'immobilier_calendar.html')
+def reserve_apartment(request, pk):
+    immobilier = get_object_or_404(Immobilier, pk=pk)
+    if request.method == 'POST':
+        if Reservation.objects.filter(user=request.user, immobilier=immobilier).exists():
+            messages.warning(request, "Vous avez déjà réservé cet appartement!")
+        else:
+            reservation = Reservation.objects.create(user=request.user, immobilier=immobilier)
+            # Create admin notification
+            admin_users = User.objects.filter(is_staff=True)
+            for admin in admin_users:
+                Notification.objects.create(
+                    user=admin,
+                    message=f"Nouvelle réservation par {request.user.username} pour {immobilier.titre}"
+                )
+            messages.success(request, "Réservation effectuée avec succès!")
+    return redirect('immobilier_detail', pk=pk)
+    
