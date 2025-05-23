@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
+from django.shortcuts import render
 
 urlpatterns = [
     path('', views.immobilier_list, name='immobilier_list'),
@@ -13,5 +14,6 @@ urlpatterns = [
     path('account/logout-confirm/', views.logout_confirm, name='logout_confirm'),
     path('account/logout/', views.CustomLogoutView.as_view(), name='logout'),
     path('signup/', views.signup, name='signup'),
+    path('rabat-map/', views.rabat_map, name='rabat_map'),
    
 ]

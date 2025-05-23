@@ -147,4 +147,5 @@ def reserve_apartment(request, pk):
                 )
             messages.success(request, "Réservation effectuée avec succès!")
     return redirect('immobilier_detail', pk=pk)
-    
+def rabat_map(request):
+        return render(request, 'rabat_map.html')

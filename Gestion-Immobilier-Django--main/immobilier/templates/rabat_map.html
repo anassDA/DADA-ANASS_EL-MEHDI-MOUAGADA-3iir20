@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Carte de Rabat{% endblock %}
+
+{% block content %}
+<h2>Carte de Rabat</h2>
+<div id="map"></div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var map = L.map('map').setView([34.020882, -6.841650], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+        L.marker([34.020882, -6.841650]).addTo(map)
+            .bindPopup('Rabat, Maroc')
+            .openPopup();
+    });
+</script>
+{% endblock %}
