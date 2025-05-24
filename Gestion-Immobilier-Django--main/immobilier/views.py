@@ -13,6 +13,7 @@ from .forms import ImmobilierForm
 from .models import Reservation 
 from .models import Reservation, Notification
 from django.contrib.auth.models import User
+from django.http import HttpResponse
 
 
 @login_required
@@ -149,3 +150,5 @@ def reserve_apartment(request, pk):
     return redirect('immobilier_detail', pk=pk)
 def rabat_map(request):
         return render(request, 'rabat_map.html')
+
+

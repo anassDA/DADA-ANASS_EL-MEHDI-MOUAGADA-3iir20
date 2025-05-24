@@ -15,5 +15,6 @@ urlpatterns = [
     path('account/logout/', views.CustomLogoutView.as_view(), name='logout'),
     path('signup/', views.signup, name='signup'),
     path('rabat-map/', views.rabat_map, name='rabat_map'),
+    
    
 ]

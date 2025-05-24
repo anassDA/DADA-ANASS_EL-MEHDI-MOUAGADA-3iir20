@@ -1,34 +1,66 @@
-# 🏠 Gestion Immobilière - Projet 3IIR20  
-**Binôme :** DADA - ANASS EL MEHDI - MOUAGADA  
-
-## 📝 Description  
-Une application web de gestion immobilière permettant aux **agents** et **locataires** de :  
-- Gérer les biens immobiliers (CRUD)  
-- Rechercher des propriétés avec des filtres avancés  
-- Simplifier les processus administratifs  
+### **Application de Gestion Immobilière**  
+**Projet 3IIR20**  
+**Équipe :** DADA - ANASS EL MEHDI - MOUAGADA  
 
 ---
 
-## ✨ Fonctionnalités  
-### **Pour les locataires**  
-- ✅ Inscription/connexion sécurisée  
-- 🔍 Recherche de biens par :  
-  - Prix 📊  
-  - Localisation 🗺️  
-  - Type (appartement, maison...)  
-- 📱 Gestion du profil utilisateur  
-
-### **Pour les agents**  
-- 🏢 Ajout/Modification/Suppression de biens  
-- 📈 Tableau de bord analytique  
-- 📄 Génération de contrats (PDF)  
+### **1. Description**  
+Application web permettant :  
+- Aux **locataires** de rechercher et réserver des biens immobiliers  
+- A l'**administrateur** de gérer l'ensemble des biens et utilisateurs  
 
 ---
 
-## 🛠️ Stack Technique  
-| **Backend** | **Frontend** | **Base de données** |  
-|-------------|-------------|---------------------|  
-| Django      | HTML/CSS/JS | MySQL               |  
-|             | Bootstrap   |                     |  
+### **2. Fonctionnalités**  
+
+#### **2.1 Pour les locataires**  
+- Création de compte et authentification  
+- Consultation des biens disponibles  
+- Système de recherche avec filtres :  
+  * Prix  
+  * Type de bien (appartement, maison, bureau)  
+  * Localisation (avec carte interactive de Rabat)  
+- Réservation de biens  
+- Gestion du profil utilisateur  
+
+#### **2.2 Pour l'administrateur**  
+- Gestion complète des biens (ajout, modification, suppression)  
+- Visualisation des réservations  
+- Notification instantanée lors des nouvelles réservations  
+- Tableau de bord de gestion  
+- Intégration cartographique des biens (Rabat)  
 
 ---
+
+### **3. Technologies utilisées**  
+
+#### **Backend**  
+- Framework Django  
+
+#### **Frontend**  
+- HTML5, CSS3  
+- JavaScript  
+
+#### **Base de données**  
+- MySQL  
+
+#### **Fonctionnalités avancées**  
+- Système de notifications  
+- Intégration de carte (API Mapbox ou Google Maps)  
+
+---
+
+### **4. Fonctionnement des réservations**  
+1. Le locataire effectue une recherche  
+2. Sélection et réservation d'un bien  
+3. Notification immédiate à l'administrateur  
+4. Validation/annulation possible par l'admin  
+
+---
+
+### **5. Points forts**  
+- Interface simple et intuitive  
+- Système de notification en temps réel  
+- Géolocalisation précise des biens  
+- Gestion centralisée pour l'administrateur  
+
