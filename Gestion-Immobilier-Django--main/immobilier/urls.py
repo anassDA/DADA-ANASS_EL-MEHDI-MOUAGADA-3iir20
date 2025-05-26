@@ -16,5 +16,6 @@ urlpatterns = [
     path('signup/', views.signup, name='signup'),
     path('rabat-map/', views.rabat_map, name='rabat_map'),
     
+    
    
 ]

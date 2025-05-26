@@ -1,0 +1,17 @@
+<h2>Your Notifications</h2>
+<table>
+    <tr>
+        <th>Reservation</th>
+        <th>Message</th>
+        <th>Seen</th>
+        <th>Created At</th>
+    </tr>
+    {% for notification in notifications %}
+    <tr>
+        <td>{{ notification.reservation.immobilier.titre }}</td>
+        <td>{{ notification.message }}</td>
+        <td>{{ notification.seen }}</td>
+        <td>{{ notification.created_at }}</td>
+    </tr>
+    {% endfor %}
+</table>

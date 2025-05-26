@@ -27,8 +27,10 @@ class Reservation(models.Model):
 
 class Notification(models.Model):
     reservation = models.OneToOneField('Reservation', on_delete=models.CASCADE)
+    message = models.TextField(blank=True, null=True)  
     seen = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"New reservation: {self.reservation.immobilier.titre}"
+        

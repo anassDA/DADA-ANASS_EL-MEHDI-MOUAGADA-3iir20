@@ -5,7 +5,7 @@
 {% block content %}
 {% load static %}
 <div class="container-fluid px-4 py-5">
-  <!-- Hero Section -->
+  
   <div class="row mb-5">
     <div class="col-12">
       <div class="bg-gradient-primary text-white rounded-lg shadow-lg p-5" style="background: linear-gradient(135deg, #4361ee, #3a0ca3);">
@@ -28,7 +28,7 @@
     </div>
   </div>
 
-  <!-- Search Section -->
+  
   <div class="row mb-4">
     <div class="col-12">
       <div class="card border-0 shadow-sm">
@@ -72,7 +72,7 @@
     </div>
   </div>
 
-  <!-- Property Listings -->
+ 
   {% if immobiliers %}
   <div class="row g-4">
     {% for immobilier in immobiliers %}
@@ -130,7 +130,7 @@
     {% endfor %}
   </div>
 
-  <!-- Pagination -->
+  
   <div class="row mt-5">
     <div class="col-12">
       <nav aria-label="Pagination">
@@ -188,7 +188,7 @@
     </div>
   </div>
   {% else %}
-  <!-- Empty State -->
+  
   <div class="row mt-4">
     <div class="col-12">
       <div class="card border-0 shadow-sm">

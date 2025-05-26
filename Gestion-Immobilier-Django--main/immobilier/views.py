@@ -139,7 +139,7 @@ def reserve_apartment(request, pk):
             messages.warning(request, "Vous avez déjà réservé cet appartement!")
         else:
             reservation = Reservation.objects.create(user=request.user, immobilier=immobilier)
-            # Create admin notification
+           
             admin_users = User.objects.filter(is_staff=True)
             for admin in admin_users:
                 Notification.objects.create(
@@ -150,5 +150,6 @@ def reserve_apartment(request, pk):
     return redirect('immobilier_detail', pk=pk)
 def rabat_map(request):
         return render(request, 'rabat_map.html')
+
 
 
